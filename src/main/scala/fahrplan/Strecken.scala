@@ -1,13 +1,14 @@
 package fahrplan
 
 import scala.collection.mutable.MutableList
+import scala.collection.mutable
 
 // TODO: Gleiswechsel, Fahrstraßen (Weichenabstand kürzer als Signalabstand)
 
 class Abschnitt (v_max : Int = 160, länge: Int, bahnsteig : Boolean = false) {
   var weiter : Abschnitt = null
-  var abzweige : MutableList[Abschnitt] = new MutableList[Abschnitt]
-  var von : List[Abschnitt] = null
+  var abzweige = new MutableList[Abschnitt]
+  var von = new MutableList[Abschnitt]
 
   def ==>(a: Abschnitt) = weiter = a
 
@@ -105,5 +106,19 @@ trait Bahnhof extends Streckenpunkt {
 }
 
 object Strecken {
+  def fülle_von(samen : List[Abschnitt]): Unit = {
+    val erledigt = new mutable.HashSet[Abschnitt]()
+    val todo = new mutable.Queue[Abschnitt]()
+    todo ++= samen
+    while (todo.nonEmpty) {
+      val a = todo.dequeue()
+      if (!erledigt.contains(a)) {
+        a.weiter.von += a
+        a.abzweige.foreach(_.von += a)
+        erledigt += a
+      }
+    }
+  }
+
   
 }
