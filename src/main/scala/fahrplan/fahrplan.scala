@@ -1,5 +1,7 @@
 package fahrplan
 
+
+
 object Fahrplan {
   """erste, einfache Frage: gegeben ein grober Fahrplan (Strecke, Linien, Takte)
     |gefragt: geht es so?
