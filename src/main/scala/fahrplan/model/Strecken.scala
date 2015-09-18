@@ -1,7 +1,7 @@
-package fahrplan
+package fahrplan.model
 
-import scala.collection.mutable.MutableList
 import scala.collection.mutable
+import scala.collection.mutable.MutableList
 
 // TODO: Gleiswechsel, Fahrstraßen (Weichenabstand kürzer als Signalabstand)
 
@@ -81,9 +81,9 @@ object GeradeStrecke {
     if (länge < a_länge)
       GeradeStrecke(erster, erster)
     else {
-      val (zweiter, letzter) = auto_Abschnitte(v_max, länge - a_länge, a_länge)
-      erster.weiter = zweiter
-      GeradeStrecke(erster, letzter)
+      val s = auto_Abschnitte(v_max, länge - a_länge, a_länge)
+      erster.weiter = s.erster
+      GeradeStrecke(erster, s.letzter)
     }
   }
 }

@@ -1,4 +1,4 @@
-package fahrplan
+package fahrplan.model
 
 object BerlinHauptbahnhof extends Bahnhof {
   val strecken_km = 0
@@ -14,38 +14,42 @@ object BerlinJungfernheide extends Bahnhof {
 object BahnhofSpandau extends Bahnhof {
   val strecken_km = 12428
   override val länge = 600
-  var gütergleis = durchgang()
-  var steig_1 = steig()
-  var steig_2 = steig()
-  var steig_3 = steig()
-  var steig_4 = steig()
+  val gütergleis = durchgang()
+  val steig_1 = steig()
+  val steig_2 = steig()
+  val steig_3 = steig()
+  val steig_4 = steig()
+
+  val alle = List(gütergleis, steig_1, steig_2, steig_3, steig_4)
 }
 
 object BahnhofFalkensee extends Bahnhof {
   val strecken_km = 20373
-  var steig_1 = steig()
-  var durch_1 = durchgang()
-  var durch_2 = durchgang()
-  var steig_2 = steig()
+  val steig_1 = steig()
+  val durch_1 = durchgang()
+  val durch_2 = durchgang()
+  val steig_2 = steig()
 }
 
 object BahnhofBrieselang extends Bahnhof {
   val strecken_km = 26950
-  var steig_1 = steig()
-  var durch_1 = durchgang()
-  var durch_2 = durchgang()
-  var steig_2 = steig()
+  val steig_1 = steig()
+  val durch_1 = durchgang()
+  val durch_2 = durchgang()
+  val steig_2 = steig()
 }
 
 object BahnhofNauen extends Bahnhof {
   val strecken_km = 35370
-  var durchgang_von_Hamburg = durchgang(v=200)
-  var steig_1 = steig()
-  var steig_2 = steig()
-  var durchgang_nach_Hamburg = durchgang(v=200)
-  var steig_4 = steig()
-  var steig_5 = steig()
-  var durchgang_6 = durchgang(v = 80)
+  val durchgang_von_Hamburg = durchgang(v=200)
+  val steig_1 = steig()
+  val steig_2 = steig()
+  val durchgang_nach_Hamburg = durchgang(v=200)
+  val steig_4 = steig()
+  val steig_5 = steig()
+  val durchgang_6 = durchgang(v = 80)
+
+  val alle = List(durchgang_von_Hamburg, steig_1, steig_2, durchgang_nach_Hamburg, steig_4, steig_5, durchgang_6)
 }
 
 object HamburgerBahn {
@@ -83,4 +87,5 @@ object HamburgerBahn {
     bn_2 +> BahnhofBrieselang.steig_2
   }
 
+  Strecken.fülle_von(BahnhofSpandau.alle ++ BahnhofNauen.alle)
 }
