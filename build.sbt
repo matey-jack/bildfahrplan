@@ -1,11 +1,12 @@
-lazy val commonSettings = Seq(
-  // organization := "com.example",
-  version := "0.1.0"
-)
+version := "0.1.0"
 
 scalaVersion := "2.11.7"
 
-libraryDependencies += "org.scalafx" %% "scalafx" % "8.0.0-R4"
+resolvers += Resolver.mavenLocal
 
-libraryDependencies += "org.scalatest" % "scalatest_2.11" % "2.2.5" % "test"
-
+libraryDependencies ++= Seq(
+  "org.scalafx" %% "scalafx" % "8.0.40-R8",
+  "org.scalatest" % "scalatest_2.11" % "2.2.5" % "test",
+  "com.github.matey-jack" % "enabler" % "0.1-SNAPSHOT",
+  "codes.reactive" %% "scala-time" % "0.1.0-RC1"
+)
