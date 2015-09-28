@@ -12,7 +12,7 @@ import java.util.Date
 import de.schildbach.pte.BahnProvider
 import de.schildbach.pte.dto.QueryDeparturesResult.Status
 
-case class Abfahrt(ankunft : Option[String], abfahrt : Option[String],
+case class Abfahrt(ankunft : Option[Date], abfahrt : Option[Date],
                    zug_name : String, gleis : String,
                    von : Option[String], nach : Option[String]) {
   def nur_bahn() : Boolean = {
@@ -25,7 +25,7 @@ object Abfahrt {
   def from_departure(d : Departure) : Abfahrt = {
     Abfahrt(
       ankunft = Option.empty,
-      abfahrt = Option.apply(d.plannedTime.toString),
+      abfahrt = Option.apply(d.plannedTime),
       zug_name = d.line.label,
       gleis = if (d.position != null) d.position.toString else "",
       von = Option.empty,
@@ -47,6 +47,6 @@ object Abfahrten {
 
   def main(args: Array[String]): Unit = {
     val result = request_for_station("8010404")
-    print(result(0))
+    print(result.head)
   }
 }

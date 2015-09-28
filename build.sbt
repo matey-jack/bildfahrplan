@@ -10,3 +10,5 @@ libraryDependencies ++= Seq(
   "com.github.matey-jack" % "enabler" % "0.1-SNAPSHOT",
   "codes.reactive" %% "scala-time" % "0.1.0-RC1"
 )
+
+mainClass in (Compile,run) := Some("fahrplan.ui.Gleisbelegung")
