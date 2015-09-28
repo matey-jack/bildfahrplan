@@ -1,23 +1,25 @@
 package fahrplan.model
 
-import java.text.DateFormat
-
 import de.schildbach.pte.dto.Departure
 import de.schildbach.pte.dto.Product._
 
 import scala.collection.JavaConverters._
 
-import java.util.Date
+import java.util.{GregorianCalendar, Calendar, Date}
 
 import de.schildbach.pte.BahnProvider
 import de.schildbach.pte.dto.QueryDeparturesResult.Status
 
+import scalafx.scene.paint.Color
+
 case class Abfahrt(ankunft : Option[Date], abfahrt : Option[Date],
-                   zug_name : String, gleis : String,
+                   zug_name : String, gleis : String, zug_typ : de.schildbach.pte.dto.Product,
                    von : Option[String], nach : Option[String]) {
   def nur_bahn() : Boolean = {
     zug_name.charAt(0) != 'S'
   }
+
+  def color = if (zug_typ == REGIONAL_TRAIN) Color.Crimson else Color.DarkBlue
 }
 
 object Abfahrt {
@@ -27,7 +29,8 @@ object Abfahrt {
       ankunft = Option.empty,
       abfahrt = Option.apply(d.plannedTime),
       zug_name = d.line.label,
-      gleis = if (d.position != null) d.position.toString else "",
+      zug_typ = d.line.product,
+      gleis = if (d.position != null) d.position.name else "",
       von = Option.empty,
       nach = Option.apply(d.destination.name)
     )
@@ -37,7 +40,8 @@ object Abfahrt {
 object Abfahrten {
   def request_for_station(station_id : String): Seq[Abfahrt] = {
     val provider = new BahnProvider
-    val queryResult = provider.queryDepartures(station_id, new Date, 200, true)
+    val the_date = new GregorianCalendar(2015, Calendar.SEPTEMBER, 28, 19, 0).getTime
+    val queryResult = provider.queryDepartures(station_id, the_date, 200, true)
     assert(queryResult.status == Status.OK)
     queryResult.stationDepartures.asScala
       .flatMap((x) => x.departures.asScala)
