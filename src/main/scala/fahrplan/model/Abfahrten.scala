@@ -28,7 +28,7 @@ object Abfahrt {
     Abfahrt(
       ankunft = Option.empty,
       abfahrt = Option.apply(d.plannedTime),
-      zug_name = d.line.label,
+      zug_name = d.line.label.takeWhile(_.isLetter) ++ " " ++ d.destination.name,
       zug_typ = d.line.product,
       gleis = if (d.position != null) d.position.name else "",
       von = Option.empty,
@@ -40,10 +40,15 @@ object Abfahrt {
 object Abfahrten {
   def request_for_station(station_id : String): Seq[Abfahrt] = {
     val provider = new BahnProvider
-    val the_date = new GregorianCalendar(2015, Calendar.SEPTEMBER, 28, 19, 0).getTime
-    val queryResult = provider.queryDepartures(station_id, the_date, 200, true)
+    val the_date = new GregorianCalendar(2015, Calendar.SEPTEMBER, 28, 19, 0)
+    val queryResult = provider.queryDepartures(station_id, the_date.getTime, 200, true)
     assert(queryResult.status == Status.OK)
-    queryResult.stationDepartures.asScala
+
+    val last_departure: Date = queryResult.stationDepartures.asScala.last.departures.asScala.last.plannedTime
+    val otherResult = provider.queryDepartures(station_id, last_departure, 200, true)
+    assert(otherResult.status == Status.OK)
+
+    (queryResult.stationDepartures.asScala ++ otherResult.stationDepartures.asScala)
       .flatMap((x) => x.departures.asScala)
       .filter((d) => Set(HIGH_SPEED_TRAIN, REGIONAL_TRAIN).contains(d.line.product))
       .map(Abfahrt.from_departure)
