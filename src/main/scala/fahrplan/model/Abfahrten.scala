@@ -40,7 +40,7 @@ object Abfahrt {
 object Abfahrten {
   def request_for_station(station_id : String): Seq[Abfahrt] = {
     val provider = new BahnProvider
-    val the_date = new GregorianCalendar(2015, Calendar.SEPTEMBER, 28, 19, 0)
+    val the_date = new GregorianCalendar(2015, Calendar.NOVEMBER, 28, 19, 0)
     val queryResult = provider.queryDepartures(station_id, the_date.getTime, 200, true)
     assert(queryResult.status == Status.OK)
 
