@@ -38,5 +38,8 @@ object ScrapeAllStations {
     for ( WeirdStuff(stuff) <- entries) {
       println(stuff)
     }
+    for ( StationEntry(_, name, _, _) <- entries) {
+      println(name)
+    }
   }
 }
