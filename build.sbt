@@ -11,6 +11,7 @@ libraryDependencies ++= Seq(
   "codes.reactive" %% "scala-time" % "0.1.0-RC1",
   "net.ruippeixotog" %% "scala-scraper" % "0.1.2",
   "org.json4s" %% "json4s-jackson" % "3.3.0"
+  // json4s-native doesn't use Unicode by default, therefore use Jackson for now
   // "org.scala-lang.modules" %% "scala-xml" % "1.0.3",
   // "net.databinder.dispatch" %% "dispatch-core" % "0.11.2"
 )

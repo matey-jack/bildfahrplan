@@ -7,7 +7,6 @@ import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
 import net.ruippeixotog.scalascraper.dsl.DSL._
 import org.json4s._
 import org.json4s.jackson.Serialization
-import com.fasterxml.jackson.databind.SerializationFeature
 
 
 abstract class ScrapeEntry
