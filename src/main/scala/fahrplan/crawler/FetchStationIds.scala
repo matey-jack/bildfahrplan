@@ -33,7 +33,7 @@ object FetchStationIds {
                       find(_.`type` == LocationType.STATION)
     }.map(s => HafasStation(s.id, s.name)).toSet.seq
     val queryTime = System.currentTimeMillis()
-    println("querying done: ", queryTime - startTime)
+    println("querying done(ms)", queryTime - startTime)
     //print(entries)
 
     val p = new PrintWriter("stations_with_id.json")
@@ -44,7 +44,7 @@ object FetchStationIds {
     } finally {
       p.close()
     }
-    println("saving done: ", System.currentTimeMillis() - queryTime)
+    println("saving done(ms)", System.currentTimeMillis() - queryTime)
 
   }
 }
