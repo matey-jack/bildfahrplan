@@ -2,7 +2,7 @@ version := "0.1.0"
 
 scalaVersion := "2.11.7"
 
-resolvers += Resolver.mavenLocal
+resolvers ++= Seq(Resolver.mavenLocal, Resolver.jcenterRepo)
 
 libraryDependencies ++= Seq(
   "org.scalafx" %% "scalafx" % "8.0.40-R8",
@@ -16,4 +16,4 @@ libraryDependencies ++= Seq(
   // "net.databinder.dispatch" %% "dispatch-core" % "0.11.2"
 )
 
-mainClass in (Compile,run) := Some("fahrplan.crawler.ScrapeAllStations") // Some("fahrplan.ui.Gleisbelegung")
+mainClass in (Compile,run) := Some("fahrplan.crawler.FetchStationIds") // Some("fahrplan.ui.Gleisbelegung")
