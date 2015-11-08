@@ -5,17 +5,17 @@ import java.io.PrintWriter
 import net.ruippeixotog.scalascraper.browser.Browser
 import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
 import net.ruippeixotog.scalascraper.dsl.DSL._
-
 import org.json4s._
 import org.json4s.jackson.Serialization
-// import org.json4s.jackson.Serialization.{read, write}
+import com.fasterxml.jackson.databind.SerializationFeature
 
-import java.nio.file.{Paths, Files}
-import java.nio.charset.StandardCharsets
 
 abstract class ScrapeEntry
-case class StationEntry(kuerzel : String, name : String, typ : String) extends ScrapeEntry
-case class WeirdStuff(stuff : String) extends ScrapeEntry
+
+case class ScrapedStation(kuerzel: String, name: String, typ: String) extends ScrapeEntry
+
+case class WeirdStuff(stuff: String) extends ScrapeEntry
+
 
 object ScrapeAllStations {
 
@@ -25,25 +25,28 @@ object ScrapeAllStations {
     val browser = new Browser
     val mainDoc = browser.get(baseUrl ++ "DS100ofr.html")
 
-    val entries : Seq[ScrapeEntry] = for (
+    val entries: Seq[ScrapeEntry] = for (
       url <- (mainDoc >> elementList("a")) map (_.attr("href"))
       if url.startsWith("DS100");
       row <- browser.get(baseUrl + url) >> elementList("tr")
-    ) 
-    yield row >> texts("td") filter (!_.isEmpty()) match {
-      case Seq(kuerzel, name, typ) => new StationEntry(kuerzel, name, typ)
-      case stuff => WeirdStuff(url ++ "  --->  " ++ stuff.toString)
+    )
+      yield row >> texts("td") filter (!_.isEmpty()) match {
+        case Seq(kuerzel, name, typ) => new ScrapedStation(kuerzel, name, typ)
+        case stuff => WeirdStuff(url ++ "  --->  " ++ stuff.toString)
+      }
+
+    for (WeirdStuff(stuff) <- entries) {
+      //      println(stuff)
     }
 
     implicit val formats = Serialization.formats(NoTypeHints)
+    // following method unavailable in the release we're pulling.
+    // therefore we can't serialize directy into the Writer. need to use intermediate String.
+    // org.json4s.jackson.JsonMethods.configure(SerializationFeature.CLOSE_CLOSEABLE, false)
 
-//    for ( WeirdStuff(stuff) <- entries) {
-//      println(stuff)
-//    }
-
-    val p = new java.io.PrintWriter("raw_stations.json")
+    val p = new PrintWriter("raw_stations.json")
     try {
-      for ( s @ StationEntry(_,_,_) <- entries) {
+      for (s@ScrapedStation(_, _, _) <- entries) {
         p.println(Serialization.write(s))
       }
     } finally {
