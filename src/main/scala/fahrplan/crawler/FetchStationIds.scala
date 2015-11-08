@@ -1,5 +1,6 @@
 package fahrplan.crawler
 
+import java.io.PrintWriter
 import java.nio.charset.Charset
 import java.nio.file.{Files, Paths}
 
@@ -9,11 +10,13 @@ import org.json4s.jackson.Serialization
 
 import scala.collection.JavaConverters._
 
-case class HafasStation(id: String, name: String, place: String)
+case class HafasStation(id: String, name: String) extends Comparable[HafasStation] {
+  override def compareTo(o: HafasStation): Int = if (o==null) 1 else id.compareTo(o.id)
+}
 
 object HafasStation {
   def fromLocation(l: Location): HafasStation = {
-    HafasStation(l.id, l.name, l.place)
+    HafasStation(l.id, l.name)
   }
 }
 
@@ -22,16 +25,27 @@ object FetchStationIds {
   implicit val formats = org.json4s.DefaultFormats
 
   def main(args: Array[String]): Unit = {
-
+    val startTime = System.currentTimeMillis()
     val scrapedStationLines = Files.readAllLines(Paths.get("raw_stations.json"), Charset.forName("UTF-8")).asScala
-    val grouped = (scrapedStationLines take 20).par.flatMap { line =>
-      val n: String = Serialization.read[ScrapedStation](line).name
-      provider.suggestLocations(n).getLocations.asScala.
-        filter(_.`type` == LocationType.STATION).toSet
-    }.map(HafasStation.fromLocation)
+    val entries = scrapedStationLines.par.flatMap { line =>
+      val scraped = Serialization.read[ScrapedStation](line)
+      provider.suggestLocations(scraped.name).getLocations.asScala.
+                      find(_.`type` == LocationType.STATION)
+    }.map(s => HafasStation(s.id, s.name)).toSet.seq
+    val queryTime = System.currentTimeMillis()
+    println("querying done: ", queryTime - startTime)
+    //print(entries)
 
+    val p = new PrintWriter("stations_with_id.json")
+    try {
+      for (s <- entries) {
+        p.println(Serialization.write(s))
+      }
+    } finally {
+      p.close()
+    }
+    println("saving done: ", System.currentTimeMillis() - queryTime)
 
-    print(grouped)
   }
 }
 
